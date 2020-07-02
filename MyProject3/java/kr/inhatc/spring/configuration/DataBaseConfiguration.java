@@ -1,5 +1,7 @@
 package kr.inhatc.spring.configuration;
 
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSession;
@@ -44,11 +46,35 @@ public class DataBaseConfiguration {
 		sqlSessionFactoryBean.setMapperLocations(
 				applicationContext.getResources("classpath:/mapper/**/sql-*.xml")
 				);
+		// Mybatis 설정 추가
+		sqlSessionFactoryBean.setConfiguration(mybatisConfig());
 		return sqlSessionFactoryBean.getObject();
 	}
 	
 	@Bean
+	@ConfigurationProperties(prefix = "mybatis.configuration")
+	public org.apache.ibatis.session.Configuration mybatisConfig() {
+		return new org.apache.ibatis.session.Configuration();
+	}
+
+	@Bean
 	public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
+	
+	/**
+	 * 
+	 * <pre>
+	 * 1. 개요 : JPA 설정
+	 * 2. 처리내용 : JPA 설정 빈 등록
+	 * </pre>
+	 * @Method Name : hibernateConfig
+	 * @return
+	 */
+	@Bean
+	@ConfigurationProperties(prefix = "spring.jpa")
+	public Properties hibernateConfig() {
+		return new Properties();
+	}
+	
 }
